@@ -1,0 +1,48 @@
+<template>
+    <div style="width: 95%; margin-left:2%">
+        <lightning-card>
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col ">
+                    <span class="slds-m-left_x-small" style="font-size: large;"><strong>Scheduling
+                            options</strong></span>
+                </div>
+                <div class="slds-col ">
+                    <span class="slds-float_right slds-m-right_x-small"><lightning-input message-toggle-active=""
+                            message-toggle-inactive="" type="toggle" onchange={changeToggle}
+                            label="Set date and time"></lightning-input></span>
+                </div>
+            </div><br>
+            <template lwc:if={IsActive}>
+                <div class="slds-m-left_x-small">
+                    <span>Schedule your post for the times when your audience is most active, or manually select a date
+                        and
+                        time in the future to publish your post.</span>
+                </div>
+                <br>
+                <div class="slds-m-left_x-small">
+                    <div>
+                        <span> <img src={fbIcon} width="2%"><strong> Facebook</strong></span>
+
+                        <lightning-input type="datetime" name="input2" label="" value={dateValue}></lightning-input>
+                    </div>
+                    <div>
+                        <span> <img src={InkIcon} width="2%"><strong> LinkedIn</strong></span>
+                        <lightning-input type="datetime" name="input3" label="" value={dateValue}></lightning-input>
+                    </div>
+                </div>
+            </template>
+            <br>
+            <div class="slds-m-left_x-small">
+                <span><lightning-button label="Active times" title="Active times" onclick={handleApprove}
+                        icon-name="utility:clock">
+                    </lightning-button></span>
+
+            </div>
+            <div style="height: 20px;">
+
+            </div>
+        </lightning-card>
+    </div>
+    
+
+</template>

@@ -1,0 +1,21 @@
+<template>
+    <div style="border: 2px solid rgb(95, 95, 227); border-radius: 5px">
+        <div class=" slds-align_absolute-center slds-card">
+            <img src={logo} width="20%">
+        </div>
+        <div class="slds-var-m-around_medium slds-align_absolute-center">
+            <template lwc:if={openCreatePost}>
+                <c-create-post-page parent-id={handlePost} oncancelevent={handleCancel}
+                    onpostevent={createPost}></c-create-post-page>
+            </template>
+            <template lwc:elseif={successPostScreen}>
+                <c-post-page-success parent-id={handlePost} onnewpostevent={handlePost}></c-post-page-success>
+            </template>
+            <template lwc:else>
+                <lightning-button label={buttonLabel} class="slds-align_absolute-center" variant="Brand"
+                    data-id={handlePost} onclick={handlePost}> </lightning-button>
+            </template>
+        </div>
+    </div>
+        <div class="slds-border_bottom" style="height: 1%;"></div>
+    </template>
