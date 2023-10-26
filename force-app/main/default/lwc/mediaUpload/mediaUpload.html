@@ -1,0 +1,23 @@
+<template>
+    <div style="width: 95%; margin-left:2%">
+    <lightning-card >
+        <h1 style="margin-left: 1%; font-size: large;"><strong> Media</strong></h1>
+        <p style="margin-left: 1%;">Share photos or a video. Instagram posts can't exceed 10 photos.</p><br /><br />
+
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col" style="margin-left: 1%;">
+                <span><lightning-button label="Add Image" title="Add Image" onclick={handleApprove}
+                        icon-name="utility:image">
+                    </lightning-button></span>
+            </div>
+            <div class="slds-col" style="margin-right: 46%; margin-bottom:1%">
+                <span><lightning-button label="Add Video" title="Add Video" onclick={handleApprove}
+                        icon-name="utility:video">
+                    </lightning-button>
+                </span>
+            </div>
+        </div>
+    </lightning-card>
+</div>
+
+</template>

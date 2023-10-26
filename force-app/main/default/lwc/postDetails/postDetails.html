@@ -1,0 +1,30 @@
+<template>
+    <div style="width: 95%; margin-left:2%">
+        <lightning-card >
+            <div>
+                <span style="margin-left: 1%; font-size: large;"><strong> Post details </strong></span>
+            </div>
+            
+            <div class="slds-grid slds-gutters">
+                <div class="slds-col slds-size_1-of-12" style="width: 11%;">
+                    <span>
+                        <lightning-input message-toggle-active="" message-toggle-inactive=""
+                            type="toggle"></lightning-input></span>
+                </div>
+                <div class="slds-col slds-size_1-of-12" style="width: 52%;">
+                    <span><label>Customise post for Facebook and Instagram</label></span>
+                </div>
+            </div><br>
+            <div style="width: 95%; margin-left: 2%;">
+                <lightning-input-rich-text label="Text"
+                    disabled-categories="INSERT_CONTENT REMOVE_FORMATTING ALIGN_TEXT FORMAT_BODY FORMAT_TEXT FORMAT_FONT">
+                </lightning-input-rich-text>
+            </div>
+            <div style="height: 20px;">
+
+            </div>
+
+        </lightning-card>
+    </div>
+
+</template>
