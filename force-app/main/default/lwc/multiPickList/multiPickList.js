@@ -33,10 +33,10 @@ export default class MultiPickList extends LightningElement {
                 console.log ('multipicklist-1 clicked');
                 event.stopPropagation ();
             });
-            document.addEventListener ('click', function (event) {
-                console.log ('document clicked');
-                self.closeAllDropDown();
-            });
+            // document.addEventListener ('click', function (event) {
+            //     console.log ('document clicked');
+            //     self.closeAllDropDown();
+            // });
             this._initializationCompleted = true;
             this.setPickListName ();
         }

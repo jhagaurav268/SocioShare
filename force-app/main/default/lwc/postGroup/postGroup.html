@@ -2,13 +2,15 @@
 	<div style="width: 95%; margin-left:2%">
 	<lightning-card>
 		<span class="slds-m-left_x-small" style="font-size: large;"><strong>Post To</strong></span><br>
-		<div class="slds-m-left_large slds-m-right_large" onmouseleave={mousehandler}>
+
+		  <c-multi-pick-list  options={msOptions}   onitemselected={handleOnItemSelected}></c-multi-pick-list>
+		<!-- <div class="slds-m-left_large slds-m-right_large" onmouseleave={mousehandler}> -->
 			<!-- Below code is for lightning input search box which will filter picklist result based on inputs given by user -->
 			<!-- <lightning-input type="search" label="Search Objects" onchange={handleSearch} value={searchTerm}
                 onblur={blurhandler} onfocusout={focuhandler} onclick={clickhandler} placeholder={itemcounts}>
             </lightning-input> --> 
 
-			<div class="slds-form-element">
+			<!-- <div class="slds-form-element">
 
 				<div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
 					<lightning-icon size="x-small"
@@ -18,7 +20,7 @@
 						value={searchTerm} onblur={blurhandler} onfocusout={focuhandler} onclick={clickhandler}
 						placeholder={itemcounts} />
 				</div>
-			</div>
+			</div> -->
 
 			<!-- Below code is for Select/Clear All function -->
 			<!-- <div class="slds-grid slds-wrap">
@@ -44,7 +46,7 @@
             </div> -->
 
 			<!-- Below code will show dropdown picklist -->
-			<template if:true={showDropdown}>
+			<!-- <template if:true={showDropdown}>
 				<p style="font-weight: bold;" class="slds-m-around_medium">Post to Facebook and Instagram</p>
 				<div class="slds-box_border " style="width:100%">
 					<ul class="dropdown-list slds-dropdown_length-7 slds-p-left_medium">
@@ -57,14 +59,14 @@
 						</template>
 					</ul>
 				</div>
-			</template>
+			</template> -->
 
 			<!-- Below code will show selected options from picklist in pills -->
 
-		</div>
-		<div style="height: 20px;">
+		<!-- </div> -->
+		<!-- <div style="height: 20px;"> -->
 
-		</div>
+		<!-- </div> -->
 	</lightning-card>
 </div>
 

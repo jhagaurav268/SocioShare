@@ -5,18 +5,26 @@
         <p style="margin-left: 1%;">Share photos or a video. Instagram posts can't exceed 10 photos.</p><br /><br />
 
         <div class="slds-grid slds-gutters">
-            <div class="slds-col" style="margin-left: 1%;">
-                <span><lightning-button label="Add Image" title="Add Image" onclick={handleApprove}
+            <div class="slds-col slds-size_1-of-3 form-input" style="margin-left: 1%;">
+                <span>
+                     <label for="file-ip-1"><lightning-icon icon-name="utility:image" alternative-text="image!" title="image" size="small"></lightning-icon>    Add Photo</label>
+ <input type="file" id="file-ip-1" accept="image/*" onchange={handleImage}>
+                    <!-- <lightning-button label="Add Image" title="Add Image" onclick={handleImage}
                         icon-name="utility:image">
-                    </lightning-button></span>
+                    </lightning-button> -->
+                    </span>
             </div>
-            <div class="slds-col" style="margin-right: 46%; margin-bottom:1%">
-                <span><lightning-button label="Add Video" title="Add Video" onclick={handleApprove}
-                        icon-name="utility:video">
-                    </lightning-button>
-                </span>
+            <div class="slds-col slds-size_1-of-3 form-input" style=" margin-bottom:1%">
+               <span>
+                     <label for="file-ip-2"> <lightning-icon icon-name="utility:image" alternative-text="image!" title="image" size="small"></lightning-icon>    Add Video</label>
+ <input type="file" id="file-ip-2" accept="image/*" onchange={handleImage}>
+                    <!-- <lightning-button label="Add Image" title="Add Image" onclick={handleImage}
+                        icon-name="utility:image">
+                    </lightning-button> -->
+                    </span>
             </div>
         </div>
+
     </lightning-card>
 </div>
 

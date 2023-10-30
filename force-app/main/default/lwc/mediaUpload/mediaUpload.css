@@ -1,3 +1,22 @@
 :host {
     --sds-c-card-color-background: white;
 }
+.form-input input {
+  display:none;
+}
+
+.form-input label {
+  display:block;
+  width:77%;
+  height:auto;
+  /* margin-left: 25%; */
+  line-height:30px;
+  text-align:center;
+  background:#00000030;
+  color:#1172c2;
+  font-size:15px;
+  font-family:"Open Sans",sans-serif;
+  font-weight:100;
+  border-radius:5px;
+  cursor:pointer;
+}
