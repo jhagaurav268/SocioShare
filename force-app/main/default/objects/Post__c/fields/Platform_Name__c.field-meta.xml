@@ -4,7 +4,7 @@
     <externalId>false</externalId>
     <formula>IF( ISPICKVAL(Platform_Setting__r.Platform__c, &apos;Facebook_Platform&apos;),&apos;Facebook&apos;, 
   IF( ISPICKVAL( Platform_Setting__r.Platform__c , &apos;LinkedIn_Platform&apos;) , &apos;LinkedIn&apos;,&apos;&apos;)  )</formula>
-    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <formulaTreatBlanksAs>BlankAsZero </formulaTreatBlanksAs>
     <label>Platform_Name</label>
     <required>false</required>
     <trackHistory>false</trackHistory>

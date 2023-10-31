@@ -6,6 +6,7 @@ import { deleteRecord } from 'lightning/uiRecordApi';
 import { gql, graphql } from 'lightning/uiGraphQLApi';
 import { NavigationMixin } from 'lightning/navigation';
 
+
 const LINKEDIN_API = 'https://api.linkedin.com';
 const CORS_API = 'https://cors-anywhere.herokuapp.com/';
 
