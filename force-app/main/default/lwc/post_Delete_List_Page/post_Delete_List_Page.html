@@ -1,7 +1,8 @@
 <template>
-
-
 	<lightning-card>
+		<template if:true={isLoading}>
+			<lightning-spinner alternative-text="Loading"></lightning-spinner>
+		</template>
 		<template if:true={records}>
 			<div class="slds-table_edit_container slds-is-relative" style="padding:7px;">
 				<lightning-layout multiple-rows>

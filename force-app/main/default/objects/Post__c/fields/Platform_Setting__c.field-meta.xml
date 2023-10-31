@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Platform_Setting__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <externalId>false</externalId>
+    <label>Platform Setting</label>
+    <referenceTo>Platform_Setting__c</referenceTo>
+    <relationshipLabel>Posts</relationshipLabel>
+    <relationshipName>Posts</relationshipName>
+    <required>false </required>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>
