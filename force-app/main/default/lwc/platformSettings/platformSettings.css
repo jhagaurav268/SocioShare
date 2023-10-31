@@ -1,0 +1,72 @@
+.c-container {
+background-color: white;
+}
+.max-width-50{
+width: 50%;
+margin: auto auto;
+padding: auto;
+}
+.lgc-bg {
+background-color: rgb(242, 242, 242);
+}
+.text-center {
+text-align: center;
+}
+.padding-5px {
+padding: 5px;
+}
+.text-small {
+font-size: 12px;
+}
+.customIcon{
+width: 100%;
+height: auto;
+float: right;
+}
+.comments-icn {
+cursor: pointer !important;
+margin-top: 5px;
+pointer-events: all !important;
+float: right !important;
+--sds-c-icon-color-foreground-default: #0176D3;
+--sds-c-icon-color-foreground: #0176D3;
+--sds-c-icon-color-background: white;
+}
+.popupfieldalign {
+background-color: white;
+padding: 2%;
+}
+.popupInterface {
+background-color: rgb(243, 242, 242);
+height: auto;
+padding: 2px;
+font-weight: 500 !important;
+float: left;
+width: 100%;
+}
+.slds-input__icon.icon-pointer-event {
+pointer-events: all !important;
+}
+.popup-align {
+padding: 0px;
+margin-left: -4px;
+}
+.overview {
+line-height: 12px;
+}
+.backdrop {
+position: fixed;
+display: inline-block;
+width: 100%;
+height: 100%;
+top: 0;
+z-index: 9999999;
+}
+.required {
+color: red;
+font-weight:normal;
+font-size:small;
+}
+form{
+margin: 5px;
+}

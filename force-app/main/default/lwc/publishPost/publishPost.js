@@ -98,13 +98,13 @@ export default class PublishPost extends LightningElement {
             console.log('Under else If');
             var jpgPattern = /\.jpg$/i;
             var mp4Pattern = /\.mp4$/i;
-
+            if (this.textDetail != undefined) {
+                this.textDetail = this.textDetail.replace(/<\/?p>/g, '');
+            }
             if (jpgPattern.test(this.imgDetail.name)) {
-                if (this.textDetail != undefined) {
-                    this.textDetail = this.textDetail.replace(/<\/?p>/g, '');
-                }
                 this.postImageToLinkedIn();
             } else if (mp4Pattern.test(this.imgDetail.name)) {
+                this.postVideoToLinkedIn();
                 console.log("File has a .mp4 extension.");
             } else {
                 console.log("File does not have a .jpg or .mp4 extension.");
@@ -278,7 +278,137 @@ export default class PublishPost extends LightningElement {
                 });
                 this.dispatchEvent(selectedEvent);
                 this.showToast('Image Successfully posted on LinkedIn', 'success', 'Successful');
+                window.location.reload();
             }
+        }).catch((error) => {
+            this.showToast('Error in posting message', 'error', 'Error');
+        });
+    }
+
+    async postVideoToLinkedIn() {
+        var selectedEvent = new CustomEvent('postclicked', {
+            detail: true
+        });
+        
+        this.dispatchEvent(selectedEvent);
+        const formData = new Blob([this.imgDetail]);
+        let blobArr = this.splitBlob(formData, 4194303);
+        console.log('formData', blobArr[0].size);
+
+        console.log('MAIN aRRAY ', blobArr[0]);
+
+        const apiUrl = `${CORS_API}${LINKEDIN_API}/v2/videos?action=initializeUpload`;
+
+        const payload = {
+            initializeUploadRequest: {
+                owner: "urn:li:person:" + this.userId,
+                fileSizeBytes: 174220000,
+                uploadCaptions: false,
+                uploadThumbnail: false
+            }
+        };
+
+        this.callLinkedInAPI(apiUrl, 'application/json', JSON.stringify(payload)).then((data) => {
+            const uploadUrl = data.value.uploadInstructions[0].uploadUrl;
+            const uploadVideoUrl = CORS_API + uploadUrl;
+            const videoKey = data.value.video;
+            console.log('vIDEO KEY', videoKey);
+            const uploadPromises = [];
+
+            for (let i = 0; i < blobArr.length; i++) {
+                const uploadPromise = this.uploadVideo(uploadVideoUrl, blobArr[i]);
+                uploadPromises.push(uploadPromise);
+            }
+
+            Promise.all(uploadPromises)
+                .then((etagResults) => {
+                    console.log(JSON.stringify(etagResults));
+                    this.finalizeVideo(videoKey, etagResults);
+                })
+                .catch((error) => {
+                    this.showToast('Error in posting message', 'error', 'Error');
+                });
+        }).catch((error) => {
+            this.showToast('Error in posting message', 'error', 'Error');
+        });
+    }
+
+    splitBlob(blob, splitSize) {
+        const blobArray = [];
+        let offset = 0;
+
+        while (offset < blob.size) {
+            const chunkSize = Math.min(splitSize, blob.size - offset);
+
+            const chunk = blob.slice(offset, offset + chunkSize);
+
+            blobArray.push(chunk);
+
+            offset += chunkSize;
+        }
+
+        return blobArray;
+    }
+
+    async uploadVideo(uploadVideoUrl, formData) {
+        try {
+            const data = await this.callLinkedInAPI(uploadVideoUrl, 'video/mp4', formData);
+            return data;
+        } catch (error) {
+            this.showToast('Error in posting message', 'error', 'Error');
+            throw error;
+        }
+
+    }
+
+    async finalizeVideo(videoKey, etag) {
+        console.log('finalize video api called ', etag);
+        const apiUrl = `${CORS_API}${LINKEDIN_API}/v2/videos?action=finalizeUpload`;
+
+        const payload = {
+            finalizeUploadRequest: {
+                video: videoKey,
+                uploadToken: "",
+                uploadedPartIds: etag
+            }
+        };
+
+        this.callLinkedInAPI(apiUrl, 'application/json', JSON.stringify(payload)).then((data) => {
+            this.postVideo(videoKey);
+        }).catch((error) => {
+            this.showToast('Error in posting message', 'error', 'Error');
+        });
+    }
+
+    async postVideo(videoKey) {
+        const apiUrl = `${CORS_API}${LINKEDIN_API}/v2/posts`;
+
+        const payload = {
+            author: "urn:li:person:" + this.userId,
+            commentary: this.textDetail,
+            visibility: "PUBLIC",
+            distribution: {
+                feedDistribution: "MAIN_FEED",
+                targetEntities: [],
+                thirdPartyDistributionChannels: [],
+            },
+            content: {
+                media: {
+                    title: "title of the video",
+                    id: videoKey,
+                },
+            },
+            lifecycleState: "PUBLISHED",
+            isReshareDisabledByAuthor: false,
+        };
+
+        this.callLinkedInAPI(apiUrl, 'application/json', JSON.stringify(payload)).then((data) => {
+            var selectedEvent = new CustomEvent('postclicked', {
+                detail: false
+            });
+            this.dispatchEvent(selectedEvent);
+            this.showToast('Video Successfully posted on LinkedIn', 'success', 'Successful');
+            window.location.reload();
         }).catch((error) => {
             this.showToast('Error in posting message', 'error', 'Error');
         });

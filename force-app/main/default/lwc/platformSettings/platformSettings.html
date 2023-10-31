@@ -1,0 +1,110 @@
+<template>
+<div class="c-container">
+<div class="max-width-50">
+<lightning-layout>
+    <lightning-layout-item flexibility="auto" padding="around-small" size="12">
+        <h2 class="slds-text-heading_medium slds-m-bottom_medium text-center">Platform Settings</h2>
+        <template for:each={externalServices} for:item="service">
+            <div key={service.name} class="padding-5px">
+                <div class="slds-p-around_small lgc-bg">
+                    <lightning-layout>
+                        <lightning-layout-item size="1" class=" slds-align-middle">
+                            <lightning-tile >
+                                <img src={service.Watermark} alt={service.name} class="customIcon">
+                            </lightning-tile>
+                        </lightning-layout-item> 
+                        <lightning-layout-item size="7" class="slds-align-middle">
+                            <lightning-tile type="media">
+                                <div>
+                                    {service.title}
+                                </div>
+                                <p class="slds-truncate text-small">
+                                    <lightning-formatted-rich-text value={service.subtitle}>
+                                    </lightning-formatted-rich-text>
+                                </p>
+                            </lightning-tile>
+                        </lightning-layout-item>                                                
+                        <lightning-layout-item size="4" padding="around-small">
+                            <lightning-layout>
+                                <lightning-layout-item size="8" padding="around-small">
+                                    <lightning-input type="toggle" onchange={handleExternalService}
+                                    checked={service.enable} message-toggle-active="Enabled"
+                                    message-toggle-inactive="Disabled" value={service.name}></lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item size="4" padding="around-small">
+                                    <div class="toggle-alignment">
+                                        <lightning-button-icon icon-name="utility:delete" size="xx-large" onclick={openDeleteConfirmationPopup}
+                                            alternative-text="Delete" title="Delete" data-servicename={service.name}
+                                            disabled={service.disableDelete} variant="brand-outline">
+                                            <lightning-helptext content="Delete"></lightning-helptext>
+                                        </lightning-button-icon>
+                                    </div>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+            </div>
+        </template>
+    </lightning-layout-item>
+</lightning-layout>
+</div>
+</div>
+<template if:true={showInputPopup}>
+<div class="slds-modal slds-fade-in-open slds-backdrop">
+<div class="slds-modal__container">
+    <div class="slds-modal__header">
+        <lightning-button-icon icon-name="utility:close" alternative-text="Close this window" size="large"
+            variant="bare-inverse" class="slds-modal__close" onclick={closeInputPopup}></lightning-button-icon>
+        <h1 class="slds-align_absolute-center slds-text-heading_small">
+            {currentPopupConfiguration.popupTitle}</h1>
+    </div>
+    <div class="popupfieldalign">
+        <div class="popupInterface slds-align_absolute-left">
+            {currentPopupConfiguration.popupHeading}
+        </div>
+        <br />
+        <div class="popup-align">
+            <template for:each={currentPopupConfiguration.readOnly} for:item="input">
+                <div key={input.name} class="slds-p-around_x-small">
+                    <label>{input.label}</label>
+                    <abbr title="required" class="slds-required">*</abbr>
+                    <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
+                        <lightning-icon size="x-small"
+                        data-url={input.value}
+                        class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default icon-pointer-event "
+                        style="cursor: pointer;" icon-name="utility:copy" onclick={copyURLToClipboard}>
+                    </lightning-icon>
+                    <input type="text" data-readonly="true" class="slds-input" name={input.name} value={input.value} disabled /></div>
+                </div>
+            </template>
+        </div>
+        <hr if:true={currentPopupConfiguration.readOnly} />
+        <div class="popupInterface slds-align_absolute-left">
+            {currentPopupConfiguration.inputHeading}
+        </div>
+        <br/>
+        <template for:each={currentPopupConfiguration.inputs} for:item="input">
+            <div key={input.name} class="slds-p-around_x-small">
+                <label>{input.label}</label>
+                <abbr title="required" class="slds-required">*</abbr>
+                <lightning-input name={input.name} data-readonly="false" required label={input.label} class="input "
+                variant="label-hidden" value={input.value}    style="padding-top: 1px;">
+            </lightning-input>
+            
+            </div>
+        </template>
+        <div>
+            <a href={currentPopupConfiguration.link} target="_blank" size="x-small" class="comments-icn" data-helpcontent={currentPopupConfiguration.helpContent} data-link={currentPopupConfiguration.link} >{currentPopupConfiguration.helpContent}</a>
+        </div>
+    </div>
+    <div class="slds-modal__footer">
+        <lightning-button class="slds-m-right_medium" variant="brand" label="Cancel" onclick={closeInputPopup}>
+        </lightning-button>
+        <lightning-button class="slds-align_absolute-right" variant="brand" label="Submit"
+            onclick={handleUserInputsSubmit}></lightning-button>
+    </div>
+</div>
+</div>
+</template>
+</template>
