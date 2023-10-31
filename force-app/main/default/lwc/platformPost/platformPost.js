@@ -6,10 +6,9 @@ export default class PlatformPost extends LightningElement {
     isLoading = false;
 
     handleChildEvent(event){
-        console.log('heyyyyy',event.detail);
         const previewComp = this.template.querySelector('c-facebook-preview');
-        previewComp.showPreview(event.detail);
-        this.imageData = event.detail;
+        previewComp.showPreview(event.detail.src);
+        this.imageData = event.detail.file;
     }
     handleTxtChng(event){
         const previewComp = this.template.querySelector('c-facebook-preview');

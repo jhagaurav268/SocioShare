@@ -13,7 +13,6 @@ export default class PublishPost extends LightningElement {
     @api textDetail;
     @api imgDetail;
 
-    isLoading = false;
     accessToken;
     userId;
 
@@ -89,8 +88,28 @@ export default class PublishPost extends LightningElement {
     }
 
     handlePublish() {
-        this.textDetail = this.textDetail.replace(/<\/?p>/g, '')
-        this.postMessageToLinkedIn();
+        console.log('imgd ', this.imgDetail);
+
+        if (this.textDetail && (this.imgDetail == undefined || this.imgDetail == null)) {
+            console.log('Under If');
+            this.textDetail = this.textDetail.replace(/<\/?p>/g, '');
+            this.postMessageToLinkedIn();
+        } else if (this.imgDetail) {
+            console.log('Under else If');
+            var jpgPattern = /\.jpg$/i;
+            var mp4Pattern = /\.mp4$/i;
+
+            if (jpgPattern.test(this.imgDetail.name)) {
+                if (this.textDetail != undefined) {
+                    this.textDetail = this.textDetail.replace(/<\/?p>/g, '');
+                }
+                this.postImageToLinkedIn();
+            } else if (mp4Pattern.test(this.imgDetail.name)) {
+                console.log("File has a .mp4 extension.");
+            } else {
+                console.log("File does not have a .jpg or .mp4 extension.");
+            }
+        }
     }
 
     async callLinkedInAPI(apiUrl, apiHeaders, payload) {
@@ -120,11 +139,9 @@ export default class PublishPost extends LightningElement {
 
                 return responseData;
             } else {
-                this.isLoading = false;
                 console.error('API Request failed:', response.statusText);
             }
         } catch (error) {
-            this.isLoading = false;
             console.error('API Request Error:', error);
         }
     }
@@ -171,6 +188,96 @@ export default class PublishPost extends LightningElement {
                 this.dispatchEvent(selectedEvent);
                 this.showToast('Message posted on LinkedIn', 'success', 'Successful');
                 window.location.reload();
+            }
+        }).catch((error) => {
+            this.showToast('Error in posting message', 'error', 'Error');
+        });
+    }
+
+    async postImageToLinkedIn() {
+        var selectedEvent = new CustomEvent('postclicked', {
+            detail: true
+        });
+        this.dispatchEvent(selectedEvent);
+
+        const formData = new Blob([this.imgDetail]);
+        console.log('formData ', formData);
+        const apiUrl = `${CORS_API}${LINKEDIN_API}/v2/assets?action=registerUpload`;
+
+        const payload = {
+            registerUploadRequest: {
+                recipes: [
+                    'urn:li:digitalmediaRecipe:feedshare-image'
+                ],
+                owner: 'urn:li:person:' + this.userId,
+                serviceRelationships: [
+                    {
+                        relationshipType: 'OWNER',
+                        identifier: 'urn:li:userGeneratedContent'
+                    }
+                ]
+            }
+        };
+
+        this.callLinkedInAPI(apiUrl, 'application/json', JSON.stringify(payload)).then((data) => {
+            if (data) {
+                const uploadUrl = data.value.uploadMechanism["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"].uploadUrl;
+                const asset = data.value.asset;
+
+                const uploadImageUrl = CORS_API + uploadUrl;
+                this.uploadImage(uploadImageUrl, asset, formData);
+            }
+        }).catch((error) => {
+            this.showToast('Error in posting message', 'error', 'Error');
+        });
+    }
+
+    async uploadImage(uploadImageUrl, asset, formData) {
+
+        this.callLinkedInAPI(uploadImageUrl, 'image/jpeg', formData).then((data) => {
+            this.shareImageOnLinkedIn(asset);
+        }).catch((error) => {
+            this.showToast('Error in posting message', 'error', 'Error');
+        });
+    }
+
+    async shareImageOnLinkedIn(assets) {
+        const apiUrl = `${CORS_API}${LINKEDIN_API}/v2/ugcPosts`;
+
+        const payload = {
+            visibility: {
+                'com.linkedin.ugc.MemberNetworkVisibility': 'PUBLIC'
+            },
+            specificContent: {
+                'com.linkedin.ugc.ShareContent': {
+                    media: [
+                        {
+                            title: {
+                                text: 'LinkedIn Talent Connect 2021'
+                            },
+                            media: assets,
+                            description: {
+                                text: 'Center stage!'
+                            },
+                            status: 'READY'
+                        }
+                    ],
+                    shareMediaCategory: 'IMAGE',
+                    shareCommentary: {
+                        text: this.textDetail
+                    }
+                }
+            },
+            lifecycleState: 'PUBLISHED',
+            author: 'urn:li:person:' + this.userId
+        };
+        this.callLinkedInAPI(apiUrl, 'image/jpeg', JSON.stringify(payload)).then((data) => {
+            if (data) {
+                var selectedEvent = new CustomEvent('postclicked', {
+                    detail: false
+                });
+                this.dispatchEvent(selectedEvent);
+                this.showToast('Image Successfully posted on LinkedIn', 'success', 'Successful');
             }
         }).catch((error) => {
             this.showToast('Error in posting message', 'error', 'Error');
