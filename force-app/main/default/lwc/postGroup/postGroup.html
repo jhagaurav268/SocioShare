@@ -2,69 +2,9 @@
 	<div style="width: 95%; margin-left:2%">
 	<lightning-card>
 		<span class="slds-m-left_x-small" style="font-size: large;"><strong>Post To</strong></span><br>
-		<div class="slds-m-left_large slds-m-right_large" onmouseleave={mousehandler}>
-			<!-- Below code is for lightning input search box which will filter picklist result based on inputs given by user -->
-			<!-- <lightning-input type="search" label="Search Objects" onchange={handleSearch} value={searchTerm}
-                onblur={blurhandler} onfocusout={focuhandler} onclick={clickhandler} placeholder={itemcounts}>
-            </lightning-input> --> 
 
-			<div class="slds-form-element">
+		  <c-multi-pick-list  options={msOptions}   onitemselected={handleOnItemSelected}></c-multi-pick-list>
 
-				<div class="slds-form-element__control slds-input-has-icon slds-input-has-icon_right">
-					<lightning-icon size="x-small"
-						class="slds-icon slds-input__icon slds-input__icon_right slds-icon-text-default"
-						icon-name="utility:down"></lightning-icon>
-					<input type="text" id="text-input-id-1" class="slds-input" onchange={handleSearch}
-						value={searchTerm} onblur={blurhandler} onfocusout={focuhandler} onclick={clickhandler}
-						placeholder={itemcounts} />
-				</div>
-			</div>
-
-			<!-- Below code is for Select/Clear All function -->
-			<!-- <div class="slds-grid slds-wrap">
-                <template if:true={showselectall}>
-                    <div class="slds-col slds-large-size_10-of-12 slds-medium-size_1-of-12 slds-size_1-of-12">
-                        <a href="javascript.void(0)" onclick={selectall}>Select All</a>
-                    </div>
-                    <div class="slds-col slds-large-size_2-of-12 slds-medium-size_1-of-12 slds-size_1-of-12">
-                        <div class="slds-float_right">
-                            <a href="javascript.void(0)" onclick={handleclearall}>Clear All</a>
-                        </div>
-                    </div>
-                </template>
-                <template if:false={showselectall}>
-                    <div class="slds-col slds-large-size_10-of-12 slds-medium-size_1-of-12 slds-size_1-of-12">
-                    </div>
-                    <div class="slds-col slds-large-size_2-of-12 slds-medium-size_1-of-12 slds-size_1-of-12">
-                        <div class="slds-float_right">
-                            <a href="javascript.void(0)" onclick={handleclearall}>Clear All</a>
-                        </div>
-                    </div>
-                </template>
-            </div> -->
-
-			<!-- Below code will show dropdown picklist -->
-			<template if:true={showDropdown}>
-				<p style="font-weight: bold;" class="slds-m-around_medium">Post to Facebook and Instagram</p>
-				<div class="slds-box_border " style="width:100%">
-					<ul class="dropdown-list slds-dropdown_length-7 slds-p-left_medium">
-						<template for:each={filteredResults} for:item="profile">
-							<li key={profile.Id} class="dropdown-item">
-								<lightning-input type="checkbox" checked={profile.isChecked} label={profile.Name}
-									value={profile.Id} onchange={handleSelection}>
-								</lightning-input>
-							</li>
-						</template>
-					</ul>
-				</div>
-			</template>
-
-			<!-- Below code will show selected options from picklist in pills -->
-
-		</div>
-		<div style="height: 20px;">
-
-		</div>
 	</lightning-card>
 </div>
 

@@ -1,187 +1,49 @@
 import { LightningElement, api, track } from 'lwc';
-
+import facebookLogoIcon from '@salesforce/resourceUrl/FacebookLogoIcon';
+import LinkedInLogoIcon from '@salesforce/resourceUrl/LinkedInLogoIcon';
+import imagePreview from '@salesforce/resourceUrl/ImagePreview';
 export default class FacebookPreview extends LightningElement {
-
-    @api picklistInput = ["Facebook", "LinkedIn"];
-    @api selectedItems = [];
-
-    // Track Variables
-    @track allValues = []; // this will store end result or selected values from picklist
-    @track selectedObject = false;
-    @track valuesVal = undefined;
-    @track searchTerm = '';
-    @track showDropdown = false;
-    @track itemcounts = 'None Selected';
-    @track selectionlimit = 10;
-    @track showselectall = false;
-    @track errors;
-    //this function is used to show the dropdown list
-    get filteredResults() {
-        //copying data from parent component to local variables
-        if (this.valuesVal == undefined) {
-            this.valuesVal = this.picklistInput;
-            //below method is used to change the input which we received from parent component
-            //we need input in array form, but if it's coming in JSON Object format, then we can use below piece of code to convert object to array
-            Object.keys(this.valuesVal).map(profile => {
-                this.allValues.push({ Id: profile, Name: this.valuesVal[profile] });
-            })
-
-            this.valuesVal = this.allValues.sort(function (a, b) { return a.Id - b.Id });
-            this.allValues = [];
-
-            console.log('da ', JSON.stringify(this.valuesVal));
-        }
-
-        if (this.valuesVal != null && this.valuesVal.length != 0) {
-            if (this.valuesVal) {
-                const selectedProfileNames = this.selectedItems.map(profile => profile.Name);
-                console.log('selectedProfileNames ', JSON.stringify(selectedProfileNames));
-                return this.valuesVal.map(profile => {
-
-                    //below logic is used to show check mark (✓) in dropdown checklist
-                    const isChecked = selectedProfileNames.includes(profile.Id);
-                    return {
-                        ...profile,
-                        isChecked
-                    };
-
-                }).filter(profile =>
-                    profile.Id.toLowerCase().includes(this.searchTerm.toLowerCase())
-                ).slice(0, 20);
-            } else {
-                return [];
+    fbIcon = facebookLogoIcon;
+    linkIcon=LinkedInLogoIcon;
+    imgPreview = imagePreview;
+    imgURL;
+    pagePreview = true;
+    linkPreview = false;
+    @track selectedOption;
+    changeHandler(event) {
+        const field = event.target.name;
+        if (field === 'optionSelect') {
+            this.selectedOption = event.target.value;
+            switch (this.selectedOption) {
+                case 'Facebook':
+                    this.pagePreview = true;
+                    break;
+                case 'LinkedIn':
+                    this.pagePreview = false;
+                    break;
+                default:
             }
+    
         }
     }
 
-    //this function is used to filter/search the dropdown list based on user input
-    handleSearch(event) {
-        this.searchTerm = event.target.value;
-        this.showDropdown = true;
-        this.mouse = false;
-        this.focus = false;
-        this.blurred = false;
-        if (this.selectedItems.length != 0) {
-            if (this.selectedItems.length >= this.selectionlimit) {
-                this.showDropdown = false;
-            }
+
+    @api
+    showPreview(src) {
+        console.log('heyyyyy2', src);
+        var preview = this.template.querySelector("[data-id='file-ip-1-preview']");
+        this.imgURL = src;
+        preview.src = src;
+        preview.style.display = "block";
+    }
+    @api
+    showText(txt) {
+        if (this.imgURL === undefined || this.imgURL === null || this.imgURL === '') {
+            var preview = this.template.querySelector("[data-id='file-ip-1-preview']");
+            preview.src = '';
+            preview.style.display = "none";
         }
-    }
-
-    //this function is used when user check/uncheck/selects (✓) an item in dropdown picklist
-    handleSelection(event) {
-        const selectedProfileId = event.target.value;
-        const isChecked = event.target.checked;
-
-        //if part will run if selected item is less than selection limit
-        //else part will run if selected item is equal or more than selection limit
-        if (this.selectedItems.length < this.selectionlimit) {
-
-            //below logic is used to show check mark (✓) in dropdown checklist
-            if (isChecked) {
-                const selectedProfile = this.valuesVal.find(profile => profile.Id === selectedProfileId);
-                if (selectedProfile) {
-                    this.selectedItems = [...this.selectedItems, selectedProfile];
-                    this.allValues.push(selectedProfileId);
-                }
-            } else {
-                this.selectedItems = this.selectedItems.filter(profile => profile.Id !== selectedProfileId);
-                this.allValues.splice(this.allValues.indexOf(selectedProfileId), 1);
-            }
-        } else {
-
-            //below logic is used to when user select/checks (✓) an item in dropdown picklist
-            if (isChecked) {
-                this.showDropdown = false;
-                this.errormessage();
-            }
-            else {
-                this.selectedItems = this.selectedItems.filter(profile => profile.Id !== selectedProfileId);
-                this.allValues.splice(this.allValues.indexOf(selectedProfileId), 1);
-                this.errormessage();
-            }
-        }
-        
-       // this.itemcounts = this.selectedItems.length > 0 ? `${this.selectedItems.length} options selected` : 'None Selected';
-
-        if (this.itemcounts == 'None Selected') {
-            this.selectedObject = false;
-        } else {
-            this.selectedObject = true;
-        }
-    }
-
-    //custom function used to close/open dropdown picklist
-    clickhandler(event) {
-        this.mouse = false;
-        this.showDropdown = true;
-        this.clickHandle = true;
-        this.showselectall = true;
-    }
-
-    //custom function used to close/open dropdown picklist
-    mousehandler(event) {
-        this.itemcounts = '';
-        this.mouse = true;
-        this.dropdownclose();
-        for(let i = 0 ;i < this.selectedItems.length; i++){
-            this.itemcounts += ' and ' + this.selectedItems[i].Name ;
-        }
-    }
-
-    //custom function used to close/open dropdown picklist
-    blurhandler(event) {
-        this.blurred = true;
-        this.dropdownclose();
-    }
-
-    //custom function used to close/open dropdown picklist
-    focuhandler(event) {
-        this.focus = true;
-    }
-
-    //custom function used to close/open dropdown picklist
-    dropdownclose() {
-        if (this.mouse == true && this.blurred == true && this.focus == true) {
-            this.searchTerm = '';
-            this.showDropdown = false;
-            this.clickHandle = false;
-        }
-    }
-
-    //this function is invoked when user deselect/remove (✓) items from dropdown picklist
-    handleRemove(event) {
-        const valueRemoved = event.target.name;
-        this.selectedItems = this.selectedItems.filter(profile => profile.Id !== valueRemoved);
-        this.allValues.splice(this.allValues.indexOf(valueRemoved), 1);
-        this.itemcounts = this.selectedItems.length > 0 ? `${this.selectedItems.length} options selected` : 'None Selected';
-        this.errormessage();
-
-        if (this.itemcounts == 'None Selected') {
-            this.selectedObject = false;
-        } else {
-            this.selectedObject = true;
-        }
-    }
-
-    //this function is used to show the custom error message when user is trying to select picklist items more than selectionlimit passed by parent component  
-    errormessage() {
-        this.errors = {
-            "Search Objects": "Maximum of " + this.selectionlimit + " items can be selected",
-        };
-        this.template.querySelectorAll("lightning-input").forEach(item => {
-            let label = item.label;
-            if (label == 'Search Objects') {
-
-                // if selected items list crosses selection limit, it will through custom error
-                if (this.selectedItems.length >= this.selectionlimit) {
-                    item.setCustomValidity(this.errors[label]);
-                } else {
-                    //else part will clear the error
-                    item.setCustomValidity("");
-                }
-                item.reportValidity();
-            }
-        });
+        var preview = this.template.querySelector("[data-id='demo']");
+        preview.innerHTML = txt;
     }
 }

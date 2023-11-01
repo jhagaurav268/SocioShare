@@ -1,23 +1,66 @@
 <template>
     <div style="width: 95%; margin-left:2%">
-        <lightning-card >
+        <lightning-card>
             <div>
                 <span style="margin-left: 1%; font-size: large;"><strong> Post details </strong></span>
             </div>
-            
+
             <div class="slds-grid slds-gutters">
                 <div class="slds-col slds-size_1-of-12" style="width: 11%;">
                     <span>
-                        <lightning-input message-toggle-active="" message-toggle-inactive=""
-                            type="toggle"></lightning-input></span>
+                        <lightning-input message-toggle-active="" message-toggle-inactive="" type="toggle"
+                            onclick={handleIsActive}></lightning-input></span>
                 </div>
                 <div class="slds-col slds-size_1-of-12" style="width: 52%;">
                     <span><label>Customise post for Facebook and Instagram</label></span>
                 </div>
             </div><br>
+            <template if:true={showTabs}>
+                <!-- <lightning-button-icon label="Facebook">Facebook</lightning-button-icon>
+                <lightning-button-icon label="LinkedIn">LinkedIn</lightning-button-icon> -->
+                <lightning-layout>
+                    <lightning-layout-item>
+                        <div class="slds-nav-vertical__section">
+                            <div>
+                                <fieldset class="slds-nav-vertical slds-nav-vertical_shade">
+                                    <div class="slds-grid slds-gutters">
+                                        <div class="slds-col">
+                                            <span>
+                                                <span class="slds-nav-vertical__item">
+                                                    <input type="radio" name="fb" value="fb" />
+                                                    <label class="slds-nav-vertical__action custom-logo activePage" for="fb"
+                                                        data-id="fb">
+                                                        <span class="slds-nav-vertical_radio-faux"> <a href='javascript:void(0);'
+                                                                onclick={changeHandleAction} name="fb"><img src={fburl} alt="fb"
+                                                                    name="fb"/></a>Facebook</span>
+                                                    </label>
+                                                </span>
+                                            </span>
+                                        </div>
+                                        <div class="slds-col">
+                                            <span>
+                                                <span class="slds-nav-vertical__item">
+                                                    <input type="radio" name="lnkdIn" value="lnkdIn" />
+                                                    <label class="slds-nav-vertical__action custom-logo" for="lnkdIn"
+                                                        data-id="lnkdIn">
+                                                        <span class="slds-nav-vertical_radio-faux"> <a href='javascript:void(0);'
+                                                                onclick={changeHandleAction} name="lnkdIn"><img src={lnkdInurl}
+                                                                    alt="linkedin" name="lnkdIn" />LinkedIn</a></span>
+                                                    </label>
+                                                </span>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </lightning-layout-item>
+                </lightning-layout></br>
+            </template>
             <div style="width: 95%; margin-left: 2%;">
                 <lightning-input-rich-text label="Text"
-                    disabled-categories="INSERT_CONTENT REMOVE_FORMATTING ALIGN_TEXT FORMAT_BODY FORMAT_TEXT FORMAT_FONT">
+                    disabled-categories="INSERT_CONTENT REMOVE_FORMATTING ALIGN_TEXT FORMAT_BODY FORMAT_TEXT FORMAT_FONT"
+                    onchange={handleText}>
                 </lightning-input-rich-text>
             </div>
             <div style="height: 20px;">
