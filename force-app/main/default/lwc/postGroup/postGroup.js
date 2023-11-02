@@ -25,6 +25,47 @@ export default class PostGroup extends LightningElement {
     // handleChange(event) {
     //     this.selectedValues = Array.from(event.target.selectedOptions, (option) => option.value);
     // }
+    @track
+    state = {
+        title: 'Welcome to Lightning Web Components Playground!',
+    };
+
+    @track selectedValues;
+    get msOptions () {
+        return [
+            {'key':'fb','value':'Facebook'},
+            {'key':'ln','value':'LinkedIn'},
+        ];
+    }
+
+    getSelectedItems () {
+        this.selectedValues = '';
+        let self = this;
+        this.template.querySelector ('c-multi-pick-list').getSelectedItems().forEach (function (eachItem) {
+                console.log (eachItem.value);
+                self.selectedValues += eachItem.value + ', ';
+        });
+    }
+
+    handleOnItemSelected (event) {
+        if (event.detail) {
+            this.selectedValues = '';
+            let self = this;
+            
+            event.detail.forEach (function (eachItem) {
+                    console.log (eachItem.value);
+                    self.selectedValues += eachItem.value + ', ';
+            });
+        }
+    }
+
+
+
+
+
+
+
+
     @api picklistInput = ["Facebook", "LinkedIn"];
     @api selectedItems = [];
 

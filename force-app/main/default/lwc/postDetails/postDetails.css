@@ -1,3 +1,15 @@
 :host {
     --sds-c-card-color-background: white;
 }
+.custom-logo {
+    width: 20px; 
+    height: auto;
+  }
+  
+  .tabContent{display:block;  font-size:14px; overflow: hidden; width: 99%;}
+  
+  .slds-nav-vertical__action:hover {
+  background-color: aliceblue;
+  }
+  .activePage{ background-color:darkgrey; border-bottom: solid; border-width: 3px; }
+  

@@ -1,15 +1,15 @@
 <template>
     <lightning-card>
         <div class="slds-grid slds-gutters">
-            <div class="slds-col slds-size_1-of-3">
+            <div class="slds-col slds-size_6-of-12">
                 <span>
                     <c-post-group></c-post-group>
-                    <c-post-details></c-post-details>
-                    <c-media-upload></c-media-upload>
+                    <c-post-details ontextchange={handleTxtChng}></c-post-details>
+                    <c-media-upload onfileuploaded={handleChildEvent}></c-media-upload>
                     <c-scheduling-options></c-scheduling-options>
                 </span>
             </div>
-            <div class="slds-col slds-size_1-of-3">
+            <div class="slds-col slds-size_6-of-12 previewMargin" style="margin-left: 9%;">
                 <span>
                     <c-facebook-preview></c-facebook-preview>
                 </span>

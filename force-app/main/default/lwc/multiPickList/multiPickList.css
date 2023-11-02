@@ -29,3 +29,11 @@
     border-color: darkgray;
     padding: 2px 5px;
 }
+.slds-combobox_container {
+    width: 90%;
+    margin-left: 5%;
+    padding-bottom: 2%;
+}
+.slds-dropdown-trigger_click.slds-is-open .slds-dropdown, .slds-dropdown-trigger--click.slds-is-open .slds-dropdown {
+    width: 100%
+}
