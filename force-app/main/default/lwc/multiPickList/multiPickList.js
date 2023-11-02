@@ -7,7 +7,7 @@ export default class MultiPickList extends LightningElement {
     @api showfilterinput = false; //show filterbutton
     @api showrefreshbutton = false; //show the refresh button
     @api showclearbutton = false; //show the clear button
-    @api comboplaceholder = 'Select a value'; 
+    @api comboplaceholder = 'Select a Page'; 
     
     @track _initializationCompleted = false;
     @track _selectedItems = 'Select a value';

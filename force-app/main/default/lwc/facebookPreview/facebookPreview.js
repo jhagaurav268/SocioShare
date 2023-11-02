@@ -1,20 +1,36 @@
 import { LightningElement, api, track } from 'lwc';
 import facebookLogoIcon from '@salesforce/resourceUrl/FacebookLogoIcon';
+import LinkedInLogoIcon from '@salesforce/resourceUrl/LinkedInLogoIcon';
 import imagePreview from '@salesforce/resourceUrl/ImagePreview';
 export default class FacebookPreview extends LightningElement {
     fbIcon = facebookLogoIcon;
+    linkIcon=LinkedInLogoIcon;
     imgPreview = imagePreview;
     imgURL;
+    pagePreview = true;
+    linkPreview = false;
     @track selectedOption;
     changeHandler(event) {
         const field = event.target.name;
         if (field === 'optionSelect') {
             this.selectedOption = event.target.value;
-            alert("you have selected : " + this.selectedOption);
+            switch (this.selectedOption) {
+                case 'Facebook':
+                    this.pagePreview = true;
+                    break;
+                case 'LinkedIn':
+                    this.pagePreview = false;
+                    break;
+                default:
+            }
+    
         }
     }
+
+
     @api
     showPreview(src) {
+        console.log('heyyyyy2', src);
         var preview = this.template.querySelector("[data-id='file-ip-1-preview']");
         this.imgURL = src;
         preview.src = src;

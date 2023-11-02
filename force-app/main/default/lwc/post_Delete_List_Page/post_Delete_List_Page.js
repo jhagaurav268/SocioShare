@@ -5,19 +5,24 @@ import LightningConfirm from "lightning/confirm";
 import { deleteRecord } from 'lightning/uiRecordApi';
 import { gql, graphql } from 'lightning/uiGraphQLApi';
 import { NavigationMixin } from 'lightning/navigation';
+import blankImg from '@salesforce/resourceUrl/blankImg';
 
-const API_TOKEN = 'AQV1cupGKxoR1ALqcYv4tYpFp8s2tCAUMVn_F2YcMnFTS_BE_R0EDXbkx94PHJ3_EQ0HZCIOtmFWWVocNIvUMWizpKVZSAkF-W0gSJF1gezoriuqWL0jUgomhXh_6OQfbMPapwYt6_KNoB-n58FEdAHkW_2SwgQsY1bprGYCXck47Ho8XkKE8Pk_7y92c1uAvDFWsyfvQTdi_hVLx5rUi8wqx_VgnhmtRQw9lfTM2JHu3iTzhLDl_p51gox2sOYgZedtsGNEvu2M0RbJ1rp2dOLId-HMgfm_ulyxZjaV9r25_eK1kHzDIuXX1_m4YTnYLQm7RlWJ-Nmb7WABA8H9zhpHrivtmuZxFKFVcv_CQiSO8NHLGLZPwSoNvldt20B-Ssj6K9JJ9cJ5JkNhZv4';
 const LINKEDIN_API = 'https://api.linkedin.com';
+const CORS_API = 'https://cors-anywhere.herokuapp.com/';
+
 
 const columns = [
-    { label: 'Sr.No', fieldName: 'rowNumber', type: 'number', cellAttributes: { alignment: 'left' }, initialWidth: 110 },
-    { label: 'Image', fieldName: 'ImageURL__c', type: 'customImage', initialWidth: 180, cellAttributes: { alignment: 'center' } },
+    { label: 'Sr.No', fieldName: 'rowNumber', type: 'number', cellAttributes: { alignment: 'left' },initialWidth:100},
+    { label: 'Image', fieldName: 'ImageURL__c', type: 'customImage', cellAttributes: { alignment: 'center' },initialWidth:150 },
     { label: 'Caption', fieldName: 'Caption', type: 'url', sortable: "true", typeAttributes: { label: { fieldName: 'Caption__c' }, target: '_blank' } },
-    { label: 'Posted On', fieldName: 'Posted_On__c', type: 'text', sortable: "true", initialWidth: 200 },
-    { label: 'Scheduled For', fieldName: 'Scheduled_On__c', type: 'text', sortable: "true", initialWidth: 200 },
-    { label: 'Platform', fieldName: 'Platform_Img__c', type: 'customImage', initialWidth: 200, cellAttributes: { alignment: 'center' } },
-    { label: 'Action', type: 'button-icon', title: 'Delete', typeAttributes: { iconName: 'utility:delete', name: 'delete', iconClass: 'slds-icon-text-error' }, cellAttributes: { alignment: 'left' }, initialWidth: 80, }
+    { label: 'Posted On', fieldName: 'Posted_On__c', type: 'text', sortable: "true" },
+    { label: 'Scheduled For', fieldName: 'Scheduled_On__c', type: 'text', sortable: "true" },
+    { label: 'Platform', fieldName: 'Platform_Img__c', type: 'customImage', cellAttributes: {class:"slds-align_absolute-center", }},
+    { label: '', type: 'button-icon', title: 'Delete', typeAttributes: { iconName: 'utility:delete', name: 'delete', iconClass: 'slds-icon-text-error' }, cellAttributes: { alignment: 'center' },initialWidth:6 },
+    { label: '', type: 'button-icon', title: 'Preview', typeAttributes: { iconName: 'action:preview', name: 'Preview', variant: 'brand' }, cellAttributes: { alignment: 'center' }, initialWidth:6}
+   
 ];
+
 
 export default class Post_Delete_List_Page extends NavigationMixin(LightningElement) {
 
@@ -29,6 +34,7 @@ export default class Post_Delete_List_Page extends NavigationMixin(LightningElem
     bDisableLast = false;
     pageSize;
     totalPages;
+    isLoading = false;
     pageNumber = 1;
     @track recordsToDisplay = [];
     sortBy;
@@ -41,6 +47,9 @@ export default class Post_Delete_List_Page extends NavigationMixin(LightningElem
     checked = false;
     fixedWidth = "width:8.75rem;";
     recId;
+    apiUrl;
+    headers;
+    API_TOKEN;
 
     // @wire(graphql, {
     //     query: gql`
@@ -74,16 +83,19 @@ export default class Post_Delete_List_Page extends NavigationMixin(LightningElem
         socioshareData()
             .then(result => {
                 let rec = result;
-                console.log('rec', rec);
                 for (var i = 0; i < rec.length; i++) {
                     rec[i].rowNumber = i + 1;
-                    let tempRec = Object.assign({}, rec[i]);
-                    tempRec.Caption = tempRec.Caption__c;
-                    tempConList.push(tempRec);
-
+                    
+                     if(rec[i].ImageURL__c === undefined){
+                         let baseURL = window.location.origin;
+                        rec[i].ImageURL__c = baseURL + '//resource/blankImg'; 
+                        console.log(' rec[i].ImageURL__c==>', rec[i].ImageURL__c);
+                     }
+                      let tempRec = Object.assign({}, rec[i]);
+                      tempRec.Caption = tempRec.Caption__c;
+                     tempConList.push(tempRec);
                 };
                 this.records = tempConList;
-                console.log('Records ==>', this.records);
                 this.totalRecords = result.length; // update total records count                 
                 this.pageSize = this.pageSizeOptions[0]; //set pageSize with default value as first option
                 this.paginationHelper();
@@ -197,11 +209,22 @@ export default class Post_Delete_List_Page extends NavigationMixin(LightningElem
         console.log('currentRow', JSON.stringify(event.detail.action));
         console.log('Id', JSON.stringify(event.detail.row));
         const action = event.detail.action;
+         console.log('action.name',action.name);
         const row = event.detail.row;
+         this.recId = row.Id;
         if (action.name === 'delete') {
             this.handleConfirmClick()
-            this.recId = row.Id;
+           }
+           if(action.name === 'Preview'){
+               console.log('action.name',action.name);
+            this.navigateToRecord();
         }
+        if (row.Platform_Name__c === 'Facebook') {
+            this.apiUrl = `https://graph.facebook.com/v18.0/${row.Post_Id__c}`;
+        }else if (row.Platform_Name__c === 'LinkedIn') {
+            this.apiUrl = `${CORS_API}${LINKEDIN_API}/v2/posts/${row.Post_Id__c}`;
+        }
+        this.API_TOKEN = row.Platform_Setting__r.Access_Token__c;
     }
     async handleConfirmClick() {
         const result = await LightningConfirm.open({
@@ -213,44 +236,71 @@ export default class Post_Delete_List_Page extends NavigationMixin(LightningElem
         if (result === true) {
             this.DeleteHandler();
         }
-    }
-    async DeleteHandler(event) {
-        const apiUrl = `${LINKEDIN_API}/v2/shares/urn:li:share:7124459036862799872`;//'https://api.linkedin.com/v2/shares/urn:li:share:7120305897922281472';//+deleteId;``
 
-        try {
-            const response = await fetch(apiUrl, {
+    }
+    navigateToRecord(event) {
+     this[NavigationMixin.Navigate]({
+        type: 'standard__recordPage',
+        attributes: {
+            recordId: this.recId,
+            actionName: 'view'
+        }
+    });
+}
+    async DeleteHandler(event) {
+       this.isLoading = true;
+       try {
+            const headers = {   
+                'Authorization': 'Bearer ' + this.API_TOKEN,
+                'Origin': 'https://page-innovation-2217-dev-ed.scratch.lightning.force.com',
+            };
+            const response = await fetch(this.apiUrl, {
                 method: 'DELETE',
+                headers: headers
             });
             console.log('response ', response);
             if (response.ok) {
                 console.log('API Response:', response.ok);
+                this.deletePostRecord();     
             } else {
+                this.isLoading = false;
                 console.error('API Request failed:', response.statusText);
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Error',
+                        message: 'Error Deleting record',
+                        variant: 'error'
+                    })
+                );
             }
         } catch (error) {
+            this.isLoading = false;
             console.error('API Request Error:', error);
         }
-        // console.log('this.recId', this.recId);
-        // deleteRecord(this.recId).then(() => {
-        //     console.log('under event');
-        //     this.dispatchEvent(
-        //         new ShowToastEvent({
-        //             title: 'Success',
-        //             message: 'Record deleted successfully',
-        //             variant: 'success'
-        //         })
-        //     );
-        //     window.location.reload();
-        // }).catch((error) => {
-        //     this.dispatchEvent(
-        //         new ShowToastEvent({
-        //             title: 'Error',
-        //             message: 'Error Deleting record',
-        //             variant: 'error'
-        //         })
-        //     );
-        // });
+        
+        
     }
 
-
+    deletePostRecord(){
+        deleteRecord(this.recId).then(() => {
+                console.log('under event');
+                this.isLoading = false;
+                this.dispatchEvent(
+                    new ShowToastEvent({
+                        title: 'Success',
+                        message: 'Record deleted successfully',
+                        variant: 'success'
+                    })
+                );
+                window.location.reload();
+            }).catch((error) => {
+                // this.dispatchEvent(
+                //     new ShowToastEvent({
+                //         title: 'Error',
+                //         message: 'Error Deleting record',
+                //         variant: 'error'
+                //     })
+                // );
+            });
+    }
 }
