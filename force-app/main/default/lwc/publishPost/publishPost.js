@@ -45,14 +45,14 @@ export default class PublishPost extends LightningElement {
     }
 
     handlePublish() {
-        console.log('imgd ', this.imgDetail);
+        // console.log('imgd ', this.imgDetail);
 
         if (this.textDetail && (this.imgDetail == undefined || this.imgDetail == null)) {
-            console.log('Under If');
+            //console.log('Under If');
             this.textDetail = this.textDetail.replace(/<\/?p>/g, '');
             this.postMessageToLinkedIn();
         } else if (this.imgDetail) {
-            console.log('Under else If');
+            //console.log('Under else If');
             var jpgPattern = /\.jpg$/i;
             var mp4Pattern = /\.mp4$/i;
             if (this.textDetail != undefined) {
@@ -62,7 +62,7 @@ export default class PublishPost extends LightningElement {
                 this.postImageToLinkedIn();
             } else if (mp4Pattern.test(this.imgDetail.name)) {
                 this.postVideoToLinkedIn();
-                console.log("File has a .mp4 extension.");
+                // console.log("File has a .mp4 extension.");
             } else {
                 console.log("File does not have a .jpg or .mp4 extension.");
             }
@@ -81,7 +81,7 @@ export default class PublishPost extends LightningElement {
                 headers: headers,
                 body: payload
             });
-            console.log('response ', response);
+            // console.log('response ', response);
             if (response.ok) {
                 let responseData = null;
 
@@ -95,7 +95,7 @@ export default class PublishPost extends LightningElement {
                 if (response.headers.get('content-length') !== '0') {
                     responseData = await response.json();
                 }
-                console.log('responseData ', responseData);
+                // console.log('responseData ', responseData);
                 return responseData;
             } else {
                 this.showToast(response.statusText, 'error', 'API Request failed:');
@@ -141,7 +141,7 @@ export default class PublishPost extends LightningElement {
 
         this.callLinkedInAPI(apiUrl, 'application/json', JSON.stringify(payload)).then((data) => {
             if (data) {
-                console.log('data ', data);
+                // console.log('data ', data);
                 var selectedEvent = new CustomEvent('postclicked', {
                     detail: false
                 });
@@ -151,7 +151,7 @@ export default class PublishPost extends LightningElement {
                 fields[POSTID_FIELD.fieldApiName] = data.id;
                 fields[PLATFORM_Setting_FIELD.fieldApiName] = this.platformId;
                 fields[PLATFORM_FIELD.fieldApiName] = 'LinkedIn';
-                // fields[Posted_ON_FIELD.fieldApiName] = this.currentDate;
+                fields[CAPTION_FIELD.fieldApiName] = this.textDetail;
 
                 const recordInput = { apiName: POST_OBJECT.objectApiName, fields };
                 createRecord(recordInput)
@@ -160,13 +160,7 @@ export default class PublishPost extends LightningElement {
                         console.log(postId);
                     })
                     .catch(error => {
-                        this.dispatchEvent(
-                            new ShowToastEvent({
-                                title: 'Error creating record',
-                                message: error.body.message,
-                                variant: 'error',
-                            }),
-                        );
+                        this.showToast(error.body.message, 'error', 'Error creating record');
                     });
                 this.showToast('Message posted on LinkedIn', 'success', 'Successful');
                 window.location.reload();
@@ -183,7 +177,7 @@ export default class PublishPost extends LightningElement {
         this.dispatchEvent(selectedEvent);
 
         const formData = new Blob([this.imgDetail]);
-        console.log('formData ', formData);
+        // console.log('formData ', formData);
         const apiUrl = `${CORS_API}${LINKEDIN_API}/v2/assets?action=registerUpload`;
 
         const payload = {
@@ -205,7 +199,7 @@ export default class PublishPost extends LightningElement {
             if (data) {
                 const uploadUrl = data.value.uploadMechanism["com.linkedin.digitalmedia.uploading.MediaUploadHttpRequest"].uploadUrl;
                 const asset = data.value.asset;
-                console.log(asset);
+                // console.log(asset);
                 const uploadImageUrl = CORS_API + uploadUrl;
                 this.uploadImage(uploadImageUrl, asset, formData);
             }
@@ -323,9 +317,9 @@ export default class PublishPost extends LightningElement {
         this.dispatchEvent(selectedEvent);
         const formData = new Blob([this.imgDetail]);
         let blobArr = this.splitBlob(formData, 4194303);
-        console.log('formData', blobArr[0].size);
+        // console.log('formData', blobArr[0].size);
 
-        console.log('MAIN aRRAY ', blobArr[0]);
+        // console.log('MAIN aRRAY ', blobArr[0]);
 
         const apiUrl = `${CORS_API}${LINKEDIN_API}/v2/videos?action=initializeUpload`;
 
@@ -342,7 +336,7 @@ export default class PublishPost extends LightningElement {
             const uploadUrl = data.value.uploadInstructions[0].uploadUrl;
             const uploadVideoUrl = CORS_API + uploadUrl;
             const videoKey = data.value.video;
-            console.log('vIDEO KEY', videoKey);
+            // console.log('vIDEO KEY', videoKey);
             const uploadPromises = [];
 
             for (let i = 0; i < blobArr.length; i++) {
@@ -392,7 +386,7 @@ export default class PublishPost extends LightningElement {
     }
 
     async finalizeVideo(videoKey, etag) {
-        console.log('finalize video api called ', etag);
+        // console.log('finalize video api called ', etag);
         
         const apiUrl = `${CORS_API}${LINKEDIN_API}/v2/videos?action=finalizeUpload`;
 
@@ -412,7 +406,7 @@ export default class PublishPost extends LightningElement {
     }
 
     async postVideo(videoKey) {
-        console.log('videoKey ', videoKey);
+        // console.log('videoKey ', videoKey);
         const apiUrl = `${CORS_API}${LINKEDIN_API}/v2/posts`;
 
         const payload = {
@@ -443,7 +437,7 @@ export default class PublishPost extends LightningElement {
             const urn = videoKey;
             const parts = urn.split(":");
             const assetId = parts[parts.length - 1];
-            console.log(assetId);
+            // console.log(assetId);
             this.getAssetUrl(assetId, 'videos');
             // window.location.reload();
         }).catch((error) => {
