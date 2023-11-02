@@ -3,7 +3,7 @@
     <fullName>Platform__c</fullName>
     <externalId>false</externalId>
     <label>Platform</label>
-    <required>false </required>
+    <required>false</required>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Picklist</type>

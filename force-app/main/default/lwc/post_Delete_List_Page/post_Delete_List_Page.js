@@ -5,23 +5,24 @@ import LightningConfirm from "lightning/confirm";
 import { deleteRecord } from 'lightning/uiRecordApi';
 import { gql, graphql } from 'lightning/uiGraphQLApi';
 import { NavigationMixin } from 'lightning/navigation';
-
+import blankImg from '@salesforce/resourceUrl/blankImg';
 
 const LINKEDIN_API = 'https://api.linkedin.com';
 const CORS_API = 'https://cors-anywhere.herokuapp.com/';
 
 
 const columns = [
-    { label: 'Sr.No', fieldName: 'rowNumber', type: 'number', cellAttributes: { alignment: 'left' }, initialWidth: 110 },
-    { label: 'Image', fieldName: 'ImageURL__c', type: 'customImage', initialWidth: 180, cellAttributes: { alignment: 'center' } },
+    { label: 'Sr.No', fieldName: 'rowNumber', type: 'number', cellAttributes: { alignment: 'left' },initialWidth:100},
+    { label: 'Image', fieldName: 'ImageURL__c', type: 'customImage', cellAttributes: { alignment: 'center' },initialWidth:150 },
     { label: 'Caption', fieldName: 'Caption', type: 'url', sortable: "true", typeAttributes: { label: { fieldName: 'Caption__c' }, target: '_blank' } },
-    { label: 'Posted On', fieldName: 'Posted_On__c', type: 'text', sortable: "true", initialWidth: 200 },
-    { label: 'Scheduled For', fieldName: 'Scheduled_On__c', type: 'text', sortable: "true", initialWidth: 200 },
-    { label: 'Platform', fieldName: 'Platform_Img__c', type: 'customImage', initialWidth: 200, cellAttributes: { alignment: 'center' } },
-    { label: 'Action', type: 'button-icon', title: 'Delete', typeAttributes: { iconName: 'utility:delete', name: 'delete', iconClass: 'slds-icon-text-error' }, cellAttributes: { alignment: 'left' }, initialWidth: 80, },
-    { label: 'Action', type: 'button-icon', title: 'Preview', typeAttributes: { iconName: 'action:preview', name: 'Preview' }, cellAttributes: { alignment: 'left' }, initialWidth: 80, }
-
+    { label: 'Posted On', fieldName: 'Posted_On__c', type: 'text', sortable: "true" },
+    { label: 'Scheduled For', fieldName: 'Scheduled_On__c', type: 'text', sortable: "true" },
+    { label: 'Platform', fieldName: 'Platform_Img__c', type: 'customImage', cellAttributes: {class:"slds-align_absolute-center", }},
+    { label: '', type: 'button-icon', title: 'Delete', typeAttributes: { iconName: 'utility:delete', name: 'delete', iconClass: 'slds-icon-text-error' }, cellAttributes: { alignment: 'center' },initialWidth:6 },
+    { label: '', type: 'button-icon', title: 'Preview', typeAttributes: { iconName: 'action:preview', name: 'Preview', variant: 'brand' }, cellAttributes: { alignment: 'center' }, initialWidth:6}
+   
 ];
+
 
 export default class Post_Delete_List_Page extends NavigationMixin(LightningElement) {
 
@@ -82,16 +83,19 @@ export default class Post_Delete_List_Page extends NavigationMixin(LightningElem
         socioshareData()
             .then(result => {
                 let rec = result;
-                console.log('rec', rec);
                 for (var i = 0; i < rec.length; i++) {
                     rec[i].rowNumber = i + 1;
-                    let tempRec = Object.assign({}, rec[i]);
-                    tempRec.Caption = tempRec.Caption__c;
-                    tempConList.push(tempRec);
-
+                    
+                     if(rec[i].ImageURL__c === undefined){
+                         let baseURL = window.location.origin;
+                        rec[i].ImageURL__c = baseURL + '//resource/blankImg'; 
+                        console.log(' rec[i].ImageURL__c==>', rec[i].ImageURL__c);
+                     }
+                      let tempRec = Object.assign({}, rec[i]);
+                      tempRec.Caption = tempRec.Caption__c;
+                     tempConList.push(tempRec);
                 };
                 this.records = tempConList;
-                console.log('Records ==>', this.records);
                 this.totalRecords = result.length; // update total records count                 
                 this.pageSize = this.pageSizeOptions[0]; //set pageSize with default value as first option
                 this.paginationHelper();
@@ -201,7 +205,7 @@ export default class Post_Delete_List_Page extends NavigationMixin(LightningElem
         });
         this.recordsToDisplay = parseData;
     }
-    handleRowAction(event) {
+    handleRowAction() {
         console.log('currentRow', JSON.stringify(event.detail.action));
         console.log('Id', JSON.stringify(event.detail.row));
         const action = event.detail.action;
@@ -216,14 +220,11 @@ export default class Post_Delete_List_Page extends NavigationMixin(LightningElem
             this.navigateToRecord();
         }
         if (row.Platform_Name__c === 'Facebook') {
-            this.apiUrl = `https://graph.facebook.com/v18.0/${row.Platform_Setting__r.Post_Id__c}`;
-            console.log('Facebook APi ==>', this.apiUrl);
+            this.apiUrl = `https://graph.facebook.com/v18.0/${row.Post_Id__c}`;
         }else if (row.Platform_Name__c === 'LinkedIn') {
-            this.apiUrl = `${CORS_API}${LINKEDIN_API}/v2/shares/urn:li:share:${row.Platform_Setting__r.Post_Id__c}`;
-            console.log('Facebook APi ==>', this.apiUrl);
+            this.apiUrl = `${CORS_API}${LINKEDIN_API}/v2/posts/${row.Post_Id__c}`;
         }
         this.API_TOKEN = row.Platform_Setting__r.Access_Token__c;
-        console.log('Access Token', this.API_TOKEN);
     }
     async handleConfirmClick() {
         const result = await LightningConfirm.open({
