@@ -1,0 +1,55 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 09-18-2023
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+
+<apex:page controller="FacebookStorageLandingController" >
+    <apex:slds />
+    <div class="slds-scope">
+        <apex:form id="form" style="height: 200px; padding-top: 25%;">
+            <!-- SPINNER -->
+            <div id="spinner" class="slds-spinner_container slds-is-relative" >
+                <div role="status" class="slds-spinner slds-spinner--large slds-spinner--brand">
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+            <!-- / SPINNER -->
+        </apex:form>
+    </div>
+    <script>
+    Visualforce.remoting.timeout = 120000; // Set timeout at page level
+    var code = getParameterByName('code');
+    console.log('Code parameter value: ' + code);
+    window.onload = function () {
+        setTimeout(function () {
+            var code = getParameterByName('code');
+            console.log('Code parameter 1: ' + code);
+            if (code !== '') {
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.FacebookStorageLandingController.getAccessToken}',code,handleGetAccessTokenResult,{escape: true}
+                );
+            }else{
+                alert('Invalid URL!');
+                window.close();
+            }
+        }, 1000);  
+    }
+    function handleGetAccessTokenResult(result, event){
+        if(event.status && result.success){
+            
+        }
+        }
+        function getParameterByName(name, url = window.location.href) {
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+        </script>
+</apex:page>

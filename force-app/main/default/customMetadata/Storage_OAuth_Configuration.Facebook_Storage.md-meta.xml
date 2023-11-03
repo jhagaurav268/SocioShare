@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Facebook Storage</label>
+    <protected>false</protected>
+    <values>
+        <field>Base_URL__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>OAuth_URL__c</field>
+        <value xsi:type="xsd:string">https://www.facebook.com/v17.0/dialog/oauth?</value>
+    </values>
+    <values>
+        <field>Page_Token__c</field>
+        <value xsi:type="xsd:string">https://graph.facebook.com/v17.0/</value>
+    </values>
+    <values>
+        <field>Token_URL__c</field>
+        <value xsi:type="xsd:string">https://graph.facebook.com/v17.0/oauth/access_token?</value>
+    </values>
+    <values>
+        <field>User_Token__c</field>
+        <value xsi:nil="true"/>
+    </values>
+</CustomMetadata>

@@ -3,6 +3,8 @@ import FACEBOOK_LOGO_URL from '@salesforce/resourceUrl/FacebookLogoIcon';
 import LINKEDIN_LOGO_URL from '@salesforce/resourceUrl/LinkedInLogoIcon';
 
 export default class PostDetails extends LightningElement {
+<<<<<<< HEAD
+=======
 
     fburl = FACEBOOK_LOGO_URL;
     lnkdInurl = LINKEDIN_LOGO_URL;
@@ -39,6 +41,7 @@ export default class PostDetails extends LightningElement {
         }
         
     }
+>>>>>>> b0401660568714cadc5d489cf50856c5b6b8ff64
     handleText(event){
         console.log(event.target.value);
         this.dispatchEvent(new CustomEvent('textchange', {

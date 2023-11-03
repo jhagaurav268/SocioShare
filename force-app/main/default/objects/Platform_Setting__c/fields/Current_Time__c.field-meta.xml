@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
-    <fullName>Expiry_date__c</fullName>
+    <fullName>Current_Time__c</fullName>
     <externalId>false</externalId>
-    <formula>LastModifiedDate + (Expiry__c/60/60/24)</formula>
+    <formula>NOW()</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-    <label>Expiry date</label>
+    <label>Current Time</label>
     <required>false</required>
     <trackTrending>false</trackTrending>
     <type>DateTime</type>
