@@ -1,3 +1,5 @@
+//latest
+
 import { LightningElement, api } from 'lwc';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getPlatformDetails from '@salesforce/apex/SocialShareController.getPlatformDetails';
@@ -6,7 +8,6 @@ import POST_OBJECT from '@salesforce/schema/Post__c';
 import POSTID_FIELD from '@salesforce/schema/Post__c.Post_Id__c';
 import PLATFORM_Setting_FIELD from '@salesforce/schema/Post__c.Platform_Setting__c';
 import PLATFORM_FIELD from '@salesforce/schema/Post__c.Platform__c';
-import Posted_ON_FIELD from '@salesforce/schema/Post__c.Platform__c';
 import IMAGEURL_FIELD from '@salesforce/schema/Post__c.ImageURL__c';
 import CAPTION_FIELD from '@salesforce/schema/Post__c.Caption__c';
 
@@ -98,9 +99,17 @@ export default class PublishPost extends LightningElement {
                 // console.log('responseData ', responseData);
                 return responseData;
             } else {
+                var selectedEvent = new CustomEvent('postclicked', {
+                    detail: false
+                });
+                this.dispatchEvent(selectedEvent);
                 this.showToast(response.statusText, 'error', 'API Request failed:');
             }
         } catch (error) {
+            var selectedEvent = new CustomEvent('postclicked', {
+                detail: false
+            });
+            this.dispatchEvent(selectedEvent);
             this.showToast(response.statusText, 'error', 'API Request failed:');
         }
     }
@@ -262,11 +271,13 @@ export default class PublishPost extends LightningElement {
     }
 
     async getAssetUrl(assets, assetData) {
+        console.log('assets ', assets);
+        console.log('assetData ', assetData);
         let apiData = '';
 
         if (assetData === 'images') {
             apiData = 'image';
-        } else if (assetData === 'videos'){
+        } else if (assetData === 'videos') {
             apiData = 'video';
         }
         const apiUrl = `${CORS_API}${LINKEDIN_API}/v2/${assetData}/urn:li:${apiData}:${assets}`;
@@ -281,13 +292,15 @@ export default class PublishPost extends LightningElement {
         if (response.ok) {
             let responseData = await response.json();
             console.log('responseData ', responseData.downloadUrl);
+            console.log('responseData origin ', responseData);
+
             const fields = {};
             fields[POSTID_FIELD.fieldApiName] = this.linkedInPostId;
             fields[PLATFORM_Setting_FIELD.fieldApiName] = this.platformId;
             fields[PLATFORM_FIELD.fieldApiName] = 'LinkedIn';
-            if(apiData === 'image'){
+            if (apiData === 'image') {
                 fields[IMAGEURL_FIELD.fieldApiName] = responseData.downloadUrl;
-            }else if(apiData === 'video'){
+            } else if (apiData === 'video') {
                 fields[IMAGEURL_FIELD.fieldApiName] = responseData.thumbnail;
             }
             fields[CAPTION_FIELD.fieldApiName] = this.textDetail;
@@ -299,13 +312,25 @@ export default class PublishPost extends LightningElement {
                 });
 
                 this.dispatchEvent(selectedEvent);
-                this.showToast('Image Successfully posted on LinkedIn', 'success', 'Successful');
+                if (apiData === 'video') {
+                    this.showToast('Video Successfully posted on LinkedIn', 'success', 'Successful');
+                } else if (apiData === 'image') {
+                    this.showToast('Image Successfully posted on LinkedIn', 'success', 'Successful');
+                }
                 window.location.reload();
             }).catch(error => {
                 this.showToast(error.body.message, 'error', 'Message Posted on LinkedIn but in Error creating record');
+                var selectedEvent = new CustomEvent('postclicked', {
+                    detail: false
+                });
+                this.dispatchEvent(selectedEvent);
             });
         } else {
             this.showToast(response.statusText, 'error', 'API Request failed:');
+            var selectedEvent = new CustomEvent('postclicked', {
+                detail: false
+            });
+            this.dispatchEvent(selectedEvent);
         }
     }
 
@@ -387,7 +412,7 @@ export default class PublishPost extends LightningElement {
 
     async finalizeVideo(videoKey, etag) {
         // console.log('finalize video api called ', etag);
-        
+
         const apiUrl = `${CORS_API}${LINKEDIN_API}/v2/videos?action=finalizeUpload`;
 
         const payload = {
@@ -432,13 +457,15 @@ export default class PublishPost extends LightningElement {
             payload.commentary = this.textDetail;
             payload.content.media.title = this.textDetail;
         }
-        
+
         this.callLinkedInAPI(apiUrl, 'application/json', JSON.stringify(payload)).then((data) => {
             const urn = videoKey;
             const parts = urn.split(":");
             const assetId = parts[parts.length - 1];
             // console.log(assetId);
-            this.getAssetUrl(assetId, 'videos');
+            setTimeout(() => {
+                this.getAssetUrl(assetId, 'videos');
+            }, 5000);
             // window.location.reload();
         }).catch((error) => {
             this.showToast('Error in posting message', 'error', 'Error');

@@ -29,10 +29,6 @@
 		<name>AuraDefinitionBundle</name>
 	</types>
 	<types>
-		<members>SocioShare</members>
-		<name>CustomApplication</name>
-	</types>
-	<types>
 		<members>*</members>
 		<name>CustomTab</name>
 	</types>
@@ -40,11 +36,7 @@
 		<members>*</members>
 		<name>LightningComponentBundle</name>
 	</types>
-	<types>
-		<members>Socioshare_Admin_Permissions</members>
-		<members>Socioshare_Permissions</members>
-		<name>PermissionSet</name>
-	</types>
+	
 	<types>
 		<members>*</members>
 		<name>StaticResource</name>
