@@ -46,4 +46,10 @@ export default class FacebookPreview extends LightningElement {
         var preview = this.template.querySelector("[data-id='demo']");
         preview.innerHTML = txt;
     }
+
+    @api clearData(){
+        this.imgURL = null;
+        this.pagePreview = true;
+        this.linkPreview = false;
+    }
 }

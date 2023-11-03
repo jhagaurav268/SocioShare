@@ -47,8 +47,10 @@ export default class PublishPost extends LightningElement {
 
     handlePublish() {
         // console.log('imgd ', this.imgDetail);
+        console.log('Connected Data Text ', this.textDetail);
+        console.log('this.imgDetail ', this.imgDetail)
 
-        if (this.textDetail && (this.imgDetail == undefined || this.imgDetail == null)) {
+        if (this.textDetail && (this.imgDetail == undefined || this.imgDetail == null || this.imgDetail == '')) {
             //console.log('Under If');
             this.textDetail = this.textDetail.replace(/<\/?p>/g, '');
             this.postMessageToLinkedIn();
@@ -172,7 +174,9 @@ export default class PublishPost extends LightningElement {
                         this.showToast(error.body.message, 'error', 'Error creating record');
                     });
                 this.showToast('Message posted on LinkedIn', 'success', 'Successful');
-                window.location.reload();
+                // window.location.reload();
+                var selectedEvent = new CustomEvent('cleardata');
+                this.dispatchEvent(selectedEvent);
             }
         }).catch((error) => {
             this.showToast('Error in posting message', 'error', 'Error');
@@ -317,7 +321,10 @@ export default class PublishPost extends LightningElement {
                 } else if (apiData === 'image') {
                     this.showToast('Image Successfully posted on LinkedIn', 'success', 'Successful');
                 }
-                window.location.reload();
+                var selectedEvent = new CustomEvent('cleardata');
+                this.dispatchEvent(selectedEvent);
+
+                // window.location.reload();
             }).catch(error => {
                 this.showToast(error.body.message, 'error', 'Message Posted on LinkedIn but in Error creating record');
                 var selectedEvent = new CustomEvent('postclicked', {
@@ -325,6 +332,7 @@ export default class PublishPost extends LightningElement {
                 });
                 this.dispatchEvent(selectedEvent);
             });
+
         } else {
             this.showToast(response.statusText, 'error', 'API Request failed:');
             var selectedEvent = new CustomEvent('postclicked', {
