@@ -1,12 +1,12 @@
 <!--
-  @description       : 
-  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
-  @group             : 
-  @last modified on  : 09-18-2023
-  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+@description       : 
+@author            : ChangeMeIn@UserSettingsUnder.SFDoc
+@group             : 
+@last modified on  : 09-18-2023
+@last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
 -->
 
-<apex:page controller="FacebookStorageLandingController" >
+<apex:page controller="FacebookPlatformLandingController" >
     <apex:slds />
     <div class="slds-scope">
         <apex:form id="form" style="height: 200px; padding-top: 25%;">
@@ -30,7 +30,7 @@
             console.log('Code parameter 1: ' + code);
             if (code !== '') {
                 Visualforce.remoting.Manager.invokeAction(
-                    '{!$RemoteAction.FacebookStorageLandingController.getAccessToken}',code,handleGetAccessTokenResult,{escape: true}
+                    '{!$RemoteAction.FacebookPlatformLandingController.getAccessToken}',code,handleGetAccessTokenResult,{escape: true}
                 );
             }else{
                 alert('Invalid URL!');
@@ -40,16 +40,26 @@
     }
     function handleGetAccessTokenResult(result, event){
         if(event.status && result.success){
-            
+            Visualforce.remoting.Manager.invokeAction(
+                '{!$RemoteAction.FacebookPlatformLandingController.saveAccessTokenSettings}', JSON.stringify(result.data), handleSaveAccessTokenResult, { escape: true }
+            );
         }
+    }
+    function getParameterByName(name, url = window.location.href) {
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+    function handleSaveAccessTokenResult(result, event) {
+        if (event.status && result.success) {
+            window.close();
+        } else {
+            alert(result.message);
+            window.close();
         }
-        function getParameterByName(name, url = window.location.href) {
-            name = name.replace(/[\[\]]/g, '\\$&');
-            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-                results = regex.exec(url);
-            if (!results) return null;
-            if (!results[2]) return '';
-            return decodeURIComponent(results[2].replace(/\+/g, ' '));
-        }
-        </script>
+    }
+    </script>
 </apex:page>

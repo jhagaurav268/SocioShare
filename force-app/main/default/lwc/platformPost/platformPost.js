@@ -4,6 +4,7 @@ export default class PlatformPost extends LightningElement {
     textData;
     imageData;
     isLoading = false;
+    platformDetails;
 
     handleChildEvent(event) {
         const previewComp = this.template.querySelector('c-facebook-preview');
@@ -18,6 +19,9 @@ export default class PlatformPost extends LightningElement {
     }
     handlePostClicked(event) {
         this.isLoading = event.detail;
+    }
+    handlePlatformChange(event){
+        this.platformDetails = event.detail;
     }
     clearData() {
         console.log('Event Called');

@@ -287,7 +287,7 @@ Checks the user provided the required inputs
             var clientSecret = "Client_Secret=" + userInputs["Client_Secret"].trim();
             var redirectUrl = "redirect_uri=" + that.redirectUrls[that.selectedService];
             if (that.selectedService === "Facebook_Storage") {
-              //var scope = "scope=https://www.googleapis.com/auth/devstorage.read_write"; 
+              var scope = 'pages_manage_engagement,pages_manage_posts,pages_read_engagement'; 
 
               // var offline = "access_type=offline";
               // Redirect the user to oAuth Endpoint for Authorization

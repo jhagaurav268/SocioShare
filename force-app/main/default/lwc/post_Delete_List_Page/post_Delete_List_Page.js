@@ -13,7 +13,7 @@ const CORS_API = 'https://cors-anywhere.herokuapp.com/';
 
 const columns = [
     { label: 'Sr.No', fieldName: 'rowNumber', type: 'number', cellAttributes: { alignment: 'left' },initialWidth:100},
-    { label: 'Image', fieldName: 'ImageURL__c', type: 'customImage', cellAttributes: { alignment: 'center' },initialWidth:150 },
+    { label: 'Image', fieldName: 'ImageData__c', type: 'customImage', cellAttributes: { alignment: 'center' },initialWidth:150 },
     { label: 'Caption', fieldName: 'Caption', type: 'url', sortable: "true", typeAttributes: { label: { fieldName: 'Caption__c' }, target: '_blank' } },
     { label: 'Posted On', fieldName: 'Posted_On__c', type: 'text', sortable: "true" },
     { label: 'Scheduled For', fieldName: 'Scheduled_On__c', type: 'text', sortable: "true" },
@@ -86,10 +86,10 @@ export default class Post_Delete_List_Page extends NavigationMixin(LightningElem
                 for (var i = 0; i < rec.length; i++) {
                     rec[i].rowNumber = i + 1;
                     
-                     if(rec[i].ImageURL__c === undefined){
+                     if(rec[i].ImageData__c === undefined){
                          let baseURL = window.location.origin;
-                        rec[i].ImageURL__c = baseURL + '//resource/blankImg'; 
-                        console.log(' rec[i].ImageURL__c==>', rec[i].ImageURL__c);
+                        rec[i].ImageData__c = baseURL + '//resource/blankImg'; 
+                        console.log(' rec[i].ImageData__c==>', rec[i].ImageData__c);
                      }
                       let tempRec = Object.assign({}, rec[i]);
                       tempRec.Caption = tempRec.Caption__c;

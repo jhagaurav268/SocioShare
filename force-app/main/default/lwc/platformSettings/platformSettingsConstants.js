@@ -49,8 +49,8 @@ export const POPUP_CONFIGURATIONS = {
         value: ''
       },
       {
-        name: "Scope",
-        label: "Scope",
+        name: "Client_Secret",
+        label: "Client Secret",
         helpContent: "Want to find the Client Secret? Click on the link below to see the steps:",
         helpText: "Help Text",
         //link: "https://www.cloudsciencelabs.com/filemanagerconfiguration",

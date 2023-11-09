@@ -56,15 +56,13 @@ export default class PostGroup extends LightningElement {
                     console.log (eachItem.value);
                     self.selectedValues += eachItem.value + ', ';
             });
+            console.log('this.selectedValues ', this.selectedValues);
         }
+        var selectedEvent = new CustomEvent('platformchange', {
+            detail: this.selectedValues
+        });
+        this.dispatchEvent(selectedEvent);
     }
-
-
-
-
-
-
-
 
     @api picklistInput = ["Facebook", "LinkedIn"];
     @api selectedItems = [];
